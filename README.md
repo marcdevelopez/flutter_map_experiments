@@ -1,4 +1,4 @@
-# 🚀 Flutter Map Experiments
+# Flutter Map Experiments
 
 This project is a personal practice with **Flutter** and the `flutter_map` package. The main features include:
 
