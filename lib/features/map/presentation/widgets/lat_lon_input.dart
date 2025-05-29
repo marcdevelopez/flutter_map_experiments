@@ -11,6 +11,10 @@ class LatLonInput extends StatelessWidget {
           decoration: InputDecoration(labelText: 'Latitude'),
           keyboardType: TextInputType.number,
         ),
+        TextField(
+          decoration: InputDecoration(labelText: 'Longitude'),
+          keyboardType: TextInputType.number,
+        ),
       ],
     );
   }
