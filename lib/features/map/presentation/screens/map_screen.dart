@@ -1,13 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:flutter_map_experiments/features/map/data/services/location_service.dart';
+import 'package:flutter_map_experiments/features/map/presentation/widgets/lat_lon_input.dart';
 
-class MapScreen extends StatelessWidget {
+class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<MapScreen> createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
+  LatLng? currentPosition; // Si aun no se ha cargado puede ser null...
+  @override
+  /* Al abrir la pantalla, se llama a initState() → ejecutamos _loadLocation() 
+   * para buscar la ubicación actual. MUY IMPORTANTE PARA PODER VER LA PANTALLA!
+  */
+  @override
+  void initState() {
+    super.initState();
+    _loadLocation();
+  }
+
+  /* Esperamos a que devuelva la posicion y cuando la obtiene la guarda en 
+  *  currentPosition, mediante setState(). De esta forma redibujará la pantalla.
+  */
+  Future<void> _loadLocation() async {
+    final position = await LocationService.getCurrentPosition();
+    setState(() {
+      currentPosition = LatLng(position.latitude, position.longitude);
+    });
+  }
+
+  @override
+  Widget build(BuildContext) {
     return Scaffold(
-      appBar: AppBar(title: Text('Map Screen')),
-      body: Center(child: Text('Map will go here')),
+      appBar: AppBar(title: const Text('Mapa con ubicación actual')),
+      // Si la posición actual aún no se ha cargado, muestra un loader.
+      body: currentPosition == null
+          ? const Center(child: CircularProgressIndicator())
+          // Si ya está cargada muestra columna con mapa e input
+          : Column(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: FlutterMap(
+                    options: MapOptions(
+                      // Estamos seguros de que currentPosition no es null
+                      initialCenter: currentPosition!,
+                      initialZoom: 15.0,
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName:
+                            'com.example.flutter_map_experiments',
+                      ),
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: currentPosition!,
+                            width: 50,
+                            height: 50,
+                            // El marcador para posición actual será de color azul.
+                            child: const Icon(
+                              Icons.my_location,
+                              color: Colors.blue,
+                              size: 30,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: LatLonInput(),
+                  ),
+                ),
+              ],
+            ),
     );
   }
 }
