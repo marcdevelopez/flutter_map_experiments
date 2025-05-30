@@ -1,21 +1,69 @@
 import 'package:flutter/material.dart';
 
-class LatLonInput extends StatelessWidget {
+class LatLonInput extends StatefulWidget {
   const LatLonInput({super.key});
 
   @override
+  // Especificamos el tipo real del State para mejorar el autocompletado del IDE
+  State<LatLonInput> createState() => _LatLonInputState();
+}
+
+class _LatLonInputState extends State<LatLonInput> {
+  final _latController = TextEditingController();
+  final _lonController = TextEditingController();
+  final _formKey = GlobalKey<FormState>(); // Para validar el input
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: const [
-        TextField(
-          decoration: InputDecoration(labelText: 'Latitude'),
-          keyboardType: TextInputType.number,
-        ),
-        TextField(
-          decoration: InputDecoration(labelText: 'Longitude'),
-          keyboardType: TextInputType.number,
-        ),
-      ],
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          // Campo para Latitud:
+          TextFormField(
+            controller: _latController,
+            decoration: const InputDecoration(labelText: 'Latitude'),
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Introduce una latitud';
+              }
+              // Evitamos error al escribir coma en vez de punto:
+              final lat = double.tryParse(value.replaceAll(',', '.'));
+              if (lat == null || lat < -90 || lat > 90) {
+                return 'Latitud no válida (-90 a 90)';
+              }
+              return null;
+            },
+          ),
+          // Campo para Longitud:
+          TextFormField(
+            controller: _lonController,
+            decoration: const InputDecoration(labelText: 'Longitude'),
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Introduce una longitud';
+              }
+              final lon = double.tryParse(value.replaceAll(',', '.'));
+              if (lon == null || lon < -180 || lon > 180) {
+                return 'Longitud no válida (-180 a 180)';
+              }
+              return null;
+            },
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                final lat = double.parse(_latController.text.replaceAll(',', '.'));
+                final lon = double.parse(_lonController.text.replaceAll(',', '.'));
+                print('Latitud: $lat, Longitud: $lon');
+              }
+            },
+            child: const Text('Trazar ruta'),
+          ),
+        ],
+      ),
     );
   }
 }
