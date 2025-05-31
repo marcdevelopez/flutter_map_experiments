@@ -14,12 +14,18 @@ This project is a personal practice with **Flutter** and the `flutter_map` packa
    ```bash
    git clone https://github.com/marcdevelopez/flutter_map_experiments.git
    cd flutter_map_experiments
-   ```
+   ```  
 2. **Get dependencies**
+   
+   All required packages have already been manually added to the `pubspec.yaml` file.  
+To install them, run:
    
    ```bash
    flutter pub get
    ```
+   ℹ️ For more info on how dependencies are managed or how to add your own,
+check the "Dependency Management in Flutter" section below.
+   
 3. **Start your emulator or connect a physical device**
    - Android: Open Android Studio → Device Manager → Start emulator
 
@@ -38,20 +44,30 @@ This project is a personal practice with **Flutter** and the `flutter_map` packa
 
 <br>  
 
-## 📦 Dependency Management in Flutter
+## 📦 Dependency Management in Flutter  
 
-To add a new dependency, this project uses the recommended Flutter command:
+ℹ️ This project uses the following dependencies, which were manually added to the `pubspec.yaml` file:
+ ```yaml
+ flutter_map: ^8.1.1
+ latlong2: ^0.9.1
+ geolocator: ^14.0.1
+ http: ^1.4.0
+ ```
+
+If you're recreating this project from scratch or you are going to add a new dependency, you can either add them manually or use:
 
 ```bash
 flutter pub add package_name
 ```
-
-✅ This updates the pubspec.yaml file with the latest stable and compatible version of the package and automatically runs flutter pub get.
-
-🧠 If the package was already being used implicitly as a transitive dependency, Flutter will detect that and notify you without duplicating the entry.
+This command automatically fetches the latest stable and compatible version of the package and automatically runs flutter pub get. If the package was already being used implicitly as a transitive dependency, Flutter will detect that and notify you without duplicating the entry.  
 
 ⚠️ Note: Avoid updating all dependencies blindly, as some versions may be incompatible with each other. Flutter will warn you in the terminal if any issues arise when running flutter pub get.  
 
+🔎 To check for updates in the future, you can use:
+
+```bash
+flutter pub outdated
+```
 <br>  
 
 ## 🌿 Branching Strategy  
