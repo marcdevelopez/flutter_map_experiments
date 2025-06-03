@@ -88,7 +88,10 @@ class _MapScreenState extends State<MapScreen> {
                   flex: 2,
                   child: Padding(
                     padding: EdgeInsets.all(16.0),
-                    child: LatLonInput(),
+                    child: LatLonInput(
+                      // le pasamos la función definida en _MapScreenState
+                      onSubmit: updateDestination, 
+                    ),
                   ),
                 ),
               ],
