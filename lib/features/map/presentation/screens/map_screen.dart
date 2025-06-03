@@ -12,17 +12,25 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  // VARIABLES DE ESTADO
   LatLng? currentPosition; // Si aun no se ha cargado puede ser null...
-  @override
+  LatLng? destinationPosition; // Puede no haberse cargado, y ser null (...?)
   /* Al abrir la pantalla, se llama a initState() → ejecutamos _loadLocation() 
    * para buscar la ubicación actual. MUY IMPORTANTE PARA PODER VER LA PANTALLA!
   */
+  // MÉTODOS AUXILIARES
+  void updateDestination(double lat, double lon) {
+    setState(() {
+      destinationPosition = LatLng(lat, lon);
+    });
+  }
+  // MÉTODO DE CICLO DE VIDA
   @override
   void initState() {
     super.initState();
     _loadLocation();
   }
-
+  // LÓGICA ASINCRONA DE LA CARGA
   /* Esperamos a que devuelva la posicion y cuando la obtiene la guarda en 
   *  currentPosition, mediante setState(). De esta forma redibujará la pantalla.
   */
@@ -32,7 +40,7 @@ class _MapScreenState extends State<MapScreen> {
       currentPosition = LatLng(position.latitude, position.longitude);
     });
   }
-
+  // UI PRINCIPAL (mejor al final para mayor claridad en archivos State)
   @override
   Widget build(BuildContext) {
     return Scaffold(
