@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class LatLonInput extends StatefulWidget {
-  const LatLonInput({super.key});
+  final void Function(double lat, double lon) onSubmit;
+  // El widget recibirá una función como parámetro y esta será requerida:
+  const LatLonInput({super.key, required this.onSubmit});
 
   @override
   // Especificamos el tipo real del State para mejorar el autocompletado del IDE
@@ -55,9 +57,14 @@ class _LatLonInputState extends State<LatLonInput> {
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                final lat = double.parse(_latController.text.replaceAll(',', '.'));
-                final lon = double.parse(_lonController.text.replaceAll(',', '.'));
-                print('Latitud: $lat, Longitud: $lon');
+                final lat = double.parse(
+                  _latController.text.replaceAll(',', '.'),
+                );
+                final lon = double.parse(
+                  _lonController.text.replaceAll(',', '.'),
+                );
+                // Llama a la función que vendrá de MapScreen, el padre
+                widget.onSubmit(lat, lon); 
               }
             },
             child: const Text('Trazar ruta'),
