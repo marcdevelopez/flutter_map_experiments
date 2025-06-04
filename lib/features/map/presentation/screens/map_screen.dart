@@ -24,12 +24,14 @@ class _MapScreenState extends State<MapScreen> {
       destinationPosition = LatLng(lat, lon);
     });
   }
+
   // MÉTODO DE CICLO DE VIDA
   @override
   void initState() {
     super.initState();
     _loadLocation();
   }
+
   // LÓGICA ASINCRONA DE LA CARGA
   /* Esperamos a que devuelva la posicion y cuando la obtiene la guarda en 
   *  currentPosition, mediante setState(). De esta forma redibujará la pantalla.
@@ -40,6 +42,7 @@ class _MapScreenState extends State<MapScreen> {
       currentPosition = LatLng(position.latitude, position.longitude);
     });
   }
+
   // UI PRINCIPAL (mejor al final para mayor claridad en archivos State)
   @override
   Widget build(BuildContext) {
@@ -79,6 +82,17 @@ class _MapScreenState extends State<MapScreen> {
                               size: 30,
                             ),
                           ),
+                          if (destinationPosition != null)
+                            Marker(
+                              point: destinationPosition!,
+                              width: 50,
+                              height: 50,
+                              child: const Icon(
+                                Icons.location_on,
+                                color: Colors.red,
+                                size: 30,
+                              ),
+                            ),
                         ],
                       ),
                     ],
@@ -90,7 +104,7 @@ class _MapScreenState extends State<MapScreen> {
                     padding: EdgeInsets.all(16.0),
                     child: LatLonInput(
                       // le pasamos la función definida en _MapScreenState
-                      onSubmit: updateDestination, 
+                      onSubmit: updateDestination,
                     ),
                   ),
                 ),

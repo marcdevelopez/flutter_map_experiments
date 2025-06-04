@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map_experiments/shared/utils/conversion.dart';
 
 class LatLonInput extends StatefulWidget {
   final void Function(double lat, double lon) onSubmit;
@@ -31,8 +32,10 @@ class _LatLonInputState extends State<LatLonInput> {
                 return 'Introduce una latitud';
               }
               // Evitamos error al escribir coma en vez de punto:
-              final lat = double.tryParse(value.replaceAll(',', '.'));
-              if (lat == null || lat < -90 || lat > 90) {
+              final normalized = value.replaceAll(',', '.').trim();
+              final parsed =
+                  double.tryParse(normalized) ?? dmsToDecimal(normalized);
+              if (parsed == null || parsed < -90 || parsed > 90) {
                 return 'Latitud no válida (-90 a 90)';
               }
               return null;
@@ -47,8 +50,10 @@ class _LatLonInputState extends State<LatLonInput> {
               if (value == null || value.isEmpty) {
                 return 'Introduce una longitud';
               }
-              final lon = double.tryParse(value.replaceAll(',', '.'));
-              if (lon == null || lon < -180 || lon > 180) {
+              final normalized = value.replaceAll(',', '.').trim();
+              final parsed =
+                  double.tryParse(normalized) ?? dmsToDecimal(normalized);
+              if (parsed == null || parsed < -180 || parsed > 180) {
                 return 'Longitud no válida (-180 a 180)';
               }
               return null;
@@ -57,14 +62,15 @@ class _LatLonInputState extends State<LatLonInput> {
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                final lat = double.parse(
-                  _latController.text.replaceAll(',', '.'),
-                );
-                final lon = double.parse(
-                  _lonController.text.replaceAll(',', '.'),
-                );
-                // Llama a la función que vendrá de MapScreen, el padre
-                widget.onSubmit(lat, lon); 
+                final latText = _latController.text.replaceAll(',', '.').trim();
+                final lonText = _lonController.text.replaceAll(',', '.').trim();
+
+                final lat = double.tryParse(latText) ?? dmsToDecimal(latText);
+                final lon = double.tryParse(lonText) ?? dmsToDecimal(lonText);
+
+                if (lat != null && lon != null) {
+                  widget.onSubmit(lat, lon);
+                }
               }
             },
             child: const Text('Trazar ruta'),
