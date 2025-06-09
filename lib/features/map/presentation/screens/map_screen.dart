@@ -15,14 +15,24 @@ class _MapScreenState extends State<MapScreen> {
   // VARIABLES DE ESTADO
   LatLng? currentPosition; // Si aun no se ha cargado puede ser null...
   LatLng? destinationPosition; // Puede no haberse cargado, y ser null (...?)
+  final MapController _mapController = MapController();
   /* Al abrir la pantalla, se llama a initState() → ejecutamos _loadLocation() 
    * para buscar la ubicación actual. MUY IMPORTANTE PARA PODER VER LA PANTALLA!
   */
   // MÉTODOS AUXILIARES
   void updateDestination(double lat, double lon) {
+    final destination = LatLng(lat, lon);
     setState(() {
-      destinationPosition = LatLng(lat, lon);
+      destinationPosition = destination;
     });
+
+    if (currentPosition != null) {
+      final bounds = LatLngBounds.fromPoints([currentPosition!, destination]);
+
+      _mapController.fitCamera(
+        CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(40)),
+      );
+    }
   }
 
   // MÉTODO DE CICLO DE VIDA
@@ -57,6 +67,7 @@ class _MapScreenState extends State<MapScreen> {
                 Expanded(
                   flex: 3,
                   child: FlutterMap(
+                    mapController: _mapController,
                     options: MapOptions(
                       // Estamos seguros de que currentPosition no es null
                       initialCenter: currentPosition!,
