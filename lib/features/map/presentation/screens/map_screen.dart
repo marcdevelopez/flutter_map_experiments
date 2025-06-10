@@ -16,6 +16,7 @@ class _MapScreenState extends State<MapScreen> {
   LatLng? currentPosition; // Si aun no se ha cargado puede ser null...
   LatLng? destinationPosition; // Puede no haberse cargado, y ser null (...?)
   final MapController _mapController = MapController();
+  List<LatLng> routePoints = []; 
   /* Al abrir la pantalla, se llama a initState() → ejecutamos _loadLocation() 
    * para buscar la ubicación actual. MUY IMPORTANTE PARA PODER VER LA PANTALLA!
   */
