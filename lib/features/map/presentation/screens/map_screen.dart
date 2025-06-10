@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_experiments/features/map/data/services/routing_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_experiments/features/map/data/services/location_service.dart';
 import 'package:flutter_map_experiments/features/map/presentation/widgets/lat_lon_input.dart';
@@ -16,23 +17,44 @@ class _MapScreenState extends State<MapScreen> {
   LatLng? currentPosition; // Si aun no se ha cargado puede ser null...
   LatLng? destinationPosition; // Puede no haberse cargado, y ser null (...?)
   final MapController _mapController = MapController();
-  List<LatLng> routePoints = []; 
+  List<LatLng> routePoints = [];
   /* Al abrir la pantalla, se llama a initState() → ejecutamos _loadLocation() 
    * para buscar la ubicación actual. MUY IMPORTANTE PARA PODER VER LA PANTALLA!
   */
   // MÉTODOS AUXILIARES
-  void updateDestination(double lat, double lon) {
+  // Vamos a esperar una respuesta de la red
+  void updateDestination(double lat, double lon) async {
     final destination = LatLng(lat, lon);
     setState(() {
       destinationPosition = destination;
+      routePoints = []; // Limpiamos la ruta anterior al buscar una nueva
     });
 
     if (currentPosition != null) {
+      // Ajustamos el zoom para ver ambos puntos
       final bounds = LatLngBounds.fromPoints([currentPosition!, destination]);
-
       _mapController.fitCamera(
         CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(40)),
       );
+
+      // LÓGICA PARA OBTENER LA RUTA
+      try {} catch (e) {
+        final route = await RoutingService.getRouteCoordinates(
+          // Se pausa la ejecución hasta que nos devuelve la lista de coordenadas
+          currentPosition!,
+          destination,
+        );
+        setState(() {
+          /*
+          * Una vez tenemos la ruta, la guardamos en nuestra variable de estado
+          * routePoints y llamamos a setState para que la pantalla se redibuje 
+          * con la nueva línea.
+          */
+          routePoints = route;
+        });
+        // Opcional: Mostrar un error al usuario si la ruta no se puede cargar
+        print('Error al obtener la ruta: $e');
+      }
     }
   }
 
