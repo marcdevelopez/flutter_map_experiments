@@ -38,7 +38,7 @@ class _MapScreenState extends State<MapScreen> {
       );
 
       // LÓGICA PARA OBTENER LA RUTA
-      try {} catch (e) {
+      try {
         final route = await RoutingService.getRouteCoordinates(
           // Se pausa la ejecución hasta que nos devuelve la lista de coordenadas
           currentPosition!,
@@ -52,6 +52,7 @@ class _MapScreenState extends State<MapScreen> {
           */
           routePoints = route;
         });
+      } catch (e) {
         // Opcional: Mostrar un error al usuario si la ruta no se puede cargar
         print('Error al obtener la ruta: $e');
       }
@@ -129,6 +130,19 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                         ],
                       ),
+                      // Vamos a dibujar la ruta
+                      if (routePoints.isNotEmpty)
+                        PolylineLayer(
+                          polylines: [
+                            Polyline(
+                              points:
+                                  routePoints, // coordenadas que debe seguir
+                              // la línea.
+                              strokeWidth: 4,
+                              color: Colors.blueAccent,
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                 ),
