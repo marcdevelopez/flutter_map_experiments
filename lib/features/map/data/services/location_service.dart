@@ -22,4 +22,13 @@ class LocationService {
     final settings = LocationSettings(accuracy: LocationAccuracy.high);
     return await Geolocator.getCurrentPosition(locationSettings: settings);
   }
+
+  // Stream para seguimiento en tiempo real
+  static Stream<Position> getPositionStream() {
+    final settings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 5, // Solo emite cuando se mueve > 5m
+    );
+    return Geolocator.getPositionStream(locationSettings: settings);
+  }
 }
