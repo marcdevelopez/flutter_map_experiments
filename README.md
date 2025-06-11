@@ -1,10 +1,12 @@
-# Flutter Map Experiments
+# Flutter Map Experiments  
+
 
 This project is a personal practice with **Flutter** and the `flutter_map` package. The main features include:
 
 - Displaying the user's current location on a map.
 - Allowing the user to manually enter a destination (latitude and longitude).
-- Drawing a route between point A (user) and point B (destination) using external routing services.
+- Drawing a route between point A (user) and point B (destination) using external routing services.  
+
 <br>  
 
 ## 🚀 Getting Started
@@ -44,7 +46,7 @@ check the "Dependency Management in Flutter" section below.
 
 <br>  
 
-## 📦 Dependency Management in Flutter  
+## 📦 Dependency Management 
 
 ℹ️ This project uses the following dependencies, which were manually added to the `pubspec.yaml` file:
  ```yaml
@@ -67,7 +69,8 @@ This command automatically fetches the latest stable and compatible version of t
 
 ```bash
 flutter pub outdated
-```
+```  
+
 <br>  
 
 ## 🌿 Branching Strategy  
@@ -77,6 +80,9 @@ This feature was developed on a dedicated branch following a professional workfl
 feature/flutter_map_setup  
 ```
 This keeps the main branch clean and allows for focused development and easier pull requests.  
+
+Changes are integrated into main via Pull Requests  
+
 <br>  
 
 ## 🎯 Learning Objectives  
@@ -86,17 +92,50 @@ This project aims to:
 
 - Practice working with location data and routing APIs
 
-- Follow a clean and maintainable Git/GitHub workflow (feature branches, commits, and pull requests)
+- Follow a clean and maintainable Git/GitHub workflow (feature branches, commits, and pull requests)  
+
 <br>  
 
 ## 🧪 Next Steps  
 Once the basic features are completed, the project may be expanded with:
 
-- Real-time updates
+- Reverse geocoding  (tapping on the map to get an address).
 
-- Reverse geocoding
+- Route styling and instructions.
 
-- Route styling and instructions  
+¿Would you like improve it?  
+
 <br>  
+
+## 📁 Project Structure
+This project follows a professional, feature-driven folder structure to ensure scalability and maintainability.
+
+
+```
+lib/
+├── main.dart                 # Entry point, configura MyApp
+├── app/                      # Configuración global
+│   ├── app.dart              # MaterialApp y punto central de navegación
+│   ├── routes.dart           # Rutas con nombre
+│   └── theme.dart            # Colores, estilos, tipografías
+├── features/
+│   └── map/                  # Módulo 'mapa': lógica, vista, servicios
+│       ├── data/
+│       │   └── services/
+│       │       ├── location_service.dart     # Geolocalización (actual y en tiempo real)
+│       │       └── routing_service.dart      # Llamadas a OSRM para trazar rutas reales
+│       ├── presentation/
+│       │   ├── screens/
+│       │   │   └── map_screen.dart           # Pantalla principal del mapa
+│       │   └── widgets/
+│       │       └── lat_lon_input.dart        # Input para coordenadas A → B
+├── shared/                  # Utilidades reutilizables
+│   ├── widgets/             # Componentes visuales comunes
+│   ├── utils/               # Helpers (conversión grados, zoom, etc.)
+│   ├── constants/           # Colores, paddings, nombres de rutas
+│   └── models/              # Clases de datos compartidas
+```  
+<br><br>
+
   
 Stay tuned!
