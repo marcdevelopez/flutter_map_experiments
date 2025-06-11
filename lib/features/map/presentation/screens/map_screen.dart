@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_experiments/features/map/data/services/routing_service.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_experiments/features/map/data/services/location_service.dart';
 import 'package:flutter_map_experiments/features/map/presentation/widgets/lat_lon_input.dart';
@@ -18,6 +21,7 @@ class _MapScreenState extends State<MapScreen> {
   LatLng? destinationPosition; // Puede no haberse cargado, y ser null (...?)
   final MapController _mapController = MapController();
   List<LatLng> routePoints = [];
+  StreamSubscription<Position>? _positionSubscription;
   /* Al abrir la pantalla, se llama a initState() → ejecutamos _loadLocation() 
    * para buscar la ubicación actual. MUY IMPORTANTE PARA PODER VER LA PANTALLA!
   */
@@ -70,11 +74,37 @@ class _MapScreenState extends State<MapScreen> {
   /* Esperamos a que devuelva la posicion y cuando la obtiene la guarda en 
   *  currentPosition, mediante setState(). De esta forma redibujará la pantalla.
   */
+  // Reemplaza tu método _loadLocation() por este
   Future<void> _loadLocation() async {
-    final position = await LocationService.getCurrentPosition();
-    setState(() {
-      currentPosition = LatLng(position.latitude, position.longitude);
-    });
+    try {
+      // 1. Obtenemos la primera posición rápido para mostrar algo en pantalla
+      final initialPosition = await LocationService.getCurrentPosition();
+      setState(() {
+        currentPosition = LatLng(
+          initialPosition.latitude,
+          initialPosition.longitude,
+        );
+      });
+
+      // 2. Si todo va bien, empezamos a escuchar los cambios de posición
+      _positionSubscription = LocationService.getPositionStream().listen((
+        Position newPosition,
+      ) {
+        // Cada vez que el stream emite una nueva posición, este código se ejecuta
+        setState(() {
+          currentPosition = LatLng(newPosition.latitude, newPosition.longitude);
+          print("Nueva ubicación: $currentPosition"); // Para depuración
+        });
+
+        // Opcional pero recomendado: Mueve la cámara del mapa a la nueva posición
+        // La camara del mapa tiene un zoom apropiado para poder seguir la ruta
+        _mapController.move(currentPosition!, 15.0);
+      });
+    } catch (e) {
+      // Manejar error si no se pudo obtener la ubicación inicial
+      print("Error al cargar la ubicación inicial: $e");
+      // Aquí podrías mostrar un SnackBar o un diálogo al usuario
+    }
   }
 
   // UI PRINCIPAL (mejor al final para mayor claridad en archivos State)
@@ -159,5 +189,12 @@ class _MapScreenState extends State<MapScreen> {
               ],
             ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Cancelamos la suscripción al stream para dejar de escuchar las actualizaciones
+    _positionSubscription?.cancel;
+    super.dispose();
   }
 }
