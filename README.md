@@ -139,3 +139,5 @@ lib/
 
   
 Stay tuned!
+
+<!-- TEST: verificación de conexión después de mover el proyecto -->
