@@ -116,77 +116,80 @@ class _MapScreenState extends State<MapScreen> {
       body: currentPosition == null
           ? const Center(child: CircularProgressIndicator())
           // Si ya está cargada muestra columna con mapa e input
-          : Column(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: FlutterMap(
-                    mapController: _mapController,
-                    options: MapOptions(
-                      // Estamos seguros de que currentPosition no es null
-                      initialCenter: currentPosition!,
-                      initialZoom: 15.0,
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
                     ),
-                    children: [
-                      TileLayer(
-                        urlTemplate:
-                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        userAgentPackageName:
-                            'com.example.flutter_map_experiments',
-                      ),
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: currentPosition!,
-                            width: 50,
-                            height: 50,
-                            // El marcador para posición actual será de color azul.
-                            child: const Icon(
-                              Icons.my_location,
-                              color: Colors.blue,
-                              size: 30,
+                    child: IntrinsicHeight(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: constraints.maxHeight * 0.6,
+                            child: FlutterMap(
+                              mapController: _mapController,
+                              options: MapOptions(
+                                initialCenter: currentPosition!,
+                                initialZoom: 15.0,
+                              ),
+                              children: [
+                                TileLayer(
+                                  urlTemplate:
+                                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                  userAgentPackageName:
+                                      'com.example.flutter_map_experiments',
+                                ),
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      point: currentPosition!,
+                                      width: 50,
+                                      height: 50,
+                                      child: const Icon(
+                                        Icons.my_location,
+                                        color: Colors.blue,
+                                        size: 30,
+                                      ),
+                                    ),
+                                    if (destinationPosition != null)
+                                      Marker(
+                                        point: destinationPosition!,
+                                        width: 50,
+                                        height: 50,
+                                        child: const Icon(
+                                          Icons.location_on,
+                                          color: Colors.red,
+                                          size: 30,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                if (routePoints.isNotEmpty)
+                                  PolylineLayer(
+                                    polylines: [
+                                      Polyline(
+                                        points: routePoints,
+                                        strokeWidth: 4,
+                                        color: Colors.blueAccent,
+                                      ),
+                                    ],
+                                  ),
+                              ],
                             ),
                           ),
-                          if (destinationPosition != null)
-                            Marker(
-                              point: destinationPosition!,
-                              width: 50,
-                              height: 50,
-                              child: const Icon(
-                                Icons.location_on,
-                                color: Colors.red,
-                                size: 30,
-                              ),
-                            ),
+                          const SizedBox(height: 16),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: LatLonInput(onSubmit: updateDestination),
+                          ),
                         ],
                       ),
-                      // Vamos a dibujar la ruta
-                      if (routePoints.isNotEmpty)
-                        PolylineLayer(
-                          polylines: [
-                            Polyline(
-                              points:
-                                  routePoints, // coordenadas que debe seguir
-                              // la línea.
-                              strokeWidth: 4,
-                              color: Colors.blueAccent,
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: LatLonInput(
-                      // le pasamos la función definida en _MapScreenState
-                      onSubmit: updateDestination,
                     ),
                   ),
-                ),
-              ],
+                );
+              },
             ),
     );
   }
