@@ -20,6 +20,7 @@ class _MapScreenState extends State<MapScreen> {
   LatLng? currentPosition; // Si aun no se ha cargado puede ser null...
   LatLng? destinationPosition; // Puede no haberse cargado, y ser null (...?)
   final MapController _mapController = MapController();
+  double _currentZoom = 15.0;
   List<LatLng> routePoints = [];
   StreamSubscription<Position>? _positionSubscription;
   /* Al abrir la pantalla, se llama a initState() → ejecutamos _loadLocation() 
@@ -98,7 +99,7 @@ class _MapScreenState extends State<MapScreen> {
 
         // Opcional pero recomendado: Mueve la cámara del mapa a la nueva posición
         // La camara del mapa tiene un zoom apropiado para poder seguir la ruta
-        _mapController.move(currentPosition!, 15.0);
+        _mapController.move(currentPosition!, _currentZoom);
       });
     } catch (e) {
       // Manejar error si no se pudo obtener la ubicación inicial
@@ -132,7 +133,10 @@ class _MapScreenState extends State<MapScreen> {
                               mapController: _mapController,
                               options: MapOptions(
                                 initialCenter: currentPosition!,
-                                initialZoom: 15.0,
+                                initialZoom: _currentZoom,
+                                onMapEvent: (event) {
+                                  _currentZoom = event.camera.zoom;
+                                },
                               ),
                               children: [
                                 TileLayer(
